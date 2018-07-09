@@ -7,18 +7,27 @@ Plug 'junegunn/fzf.vim'
 Plug 'vim-scripts/taglist.vim'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'zchee/deoplete-jedi'
-" Plug 'w0rp/ale'
+Plug 'w0rp/ale'
 Plug 'davidhalter/jedi-vim'
 Plug 'vim-python/python-syntax'
 " Plug 'majutsushi/tagbar'
 Plug 'scrooloose/nerdtree'
 Plug 'yuttie/comfortable-motion.vim'
-"Plug 'lervag/vimtex'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'tpope/vim-fugitive'
 Plug 'metakirby5/codi.vim'
 Plug 'cjrh/vim-conda'
+Plug 'bfredl/nvim-ipy'
+Plug 'altercation/vim-colors-solarized'
+Plug 'lervag/vimtex'
 call plug#end()
+
+
+
+set splitbelow
+set splitright
+
+
 "
 "
 " " general settings
@@ -33,7 +42,17 @@ set nowrap
 "
 " " color scheme settings
 syntax on
+set background=dark
 colorscheme onedark
+" colorscheme solarized
+
+if &term =~ '256color'
+    " disable Background Color Erase (BCE) so that color schemes
+    " render properly when inside 256-color tmux and GNU screen.
+    " see also http://snk.tuxfamily.org/log/vim-256color-bce.html
+   set t_ut=
+endif
+
 "
 let mapleader=","
 let g:codi#rightalign = 0
@@ -52,6 +71,8 @@ let g:airline_powerline_fonts = 1
 " nnoremap <leader>p :CtrlPTag<CR>
 "
 " nmap <silent> <leader>s <Plug>(CommandTTag)
+"
+"
 
 nnoremap <leader>f :FZF<CR>
 nnoremap <leader>t :Tags<CR>
@@ -68,19 +89,15 @@ let g:deoplete#enable_smart_case = 1
 let g:jedi#completions_enabled = 0
 let g:deoplete#sources#jedi#show_docstring = 1
 
-set completeopt+=noinsert
+" set completeopt+=noinsert
 set scrolloff=3
 
 "
 "
-" let g:ale_linters = {
-"       \ 'python': ['flake8']
-"             \ }
-"             let g:ale_fixers = {
-"             \ 'python': []
-"             \}
-"
-"             let g:ale_lint_on_text_changed = 'never'
+let g:ale_linters = {
+       \ 'LaTeX': ['chktex']
+       \ }
+" let g:ale_lint_on_text_changed = 'never'
 "             let g:airline#extensions#ale#enabled = 1
 "
 "
@@ -100,4 +117,24 @@ nmap ,D :tab split<CR>:call jedi#goto()<CR>
 nmap <C-n> :NERDTreeToggle<CR>
 "
 let g:python_highlight_all = 1
-" 
+
+" set the cursor to a vertical line in insert mode and a solid block
+" in command mode
+let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+" upon hitting escape to change modes,
+" send successive move-left and move-right
+" commands to immediately redraw the cursor
+inoremap <special> <Esc> <Esc>hl
+"
+" " don't blink the cursor
+set guicursor+=i:blinkwait0
+
+
+
+let g:vimtex_compiler_latexmk = {
+    \ 'executable' : 'latexmk.exe',
+    \}
+
+
+let g:vimtex_view_general_viewer = 'sumatra'
