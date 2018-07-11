@@ -1,5 +1,4 @@
 call plug#begin('~/.local/share/nvim/plugegd')
-
 Plug 'joshdick/onedark.vim'
 Plug 'vim-airline/vim-airline'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -10,7 +9,6 @@ Plug 'zchee/deoplete-jedi'
 Plug 'w0rp/ale'
 Plug 'davidhalter/jedi-vim'
 Plug 'vim-python/python-syntax'
-" Plug 'majutsushi/tagbar'
 Plug 'scrooloose/nerdtree'
 Plug 'yuttie/comfortable-motion.vim'
 Plug 'ludovicchabant/vim-gutentags'
@@ -18,11 +16,11 @@ Plug 'tpope/vim-fugitive'
 Plug 'metakirby5/codi.vim'
 Plug 'cjrh/vim-conda'
 Plug 'bfredl/nvim-ipy'
-Plug 'altercation/vim-colors-solarized'
 Plug 'lervag/vimtex'
+Plug 'morhetz/gruvbox'
 call plug#end()
 
-
+set clipboard=unnamed
 
 set splitbelow
 set splitright
@@ -43,7 +41,8 @@ set nowrap
 " " color scheme settings
 syntax on
 set background=dark
-colorscheme onedark
+let g:gruvbox_italic=1
+colorscheme gruvbox
 " colorscheme solarized
 
 if &term =~ '256color'
@@ -97,8 +96,8 @@ set scrolloff=3
 let g:ale_linters = {
        \ 'LaTeX': ['chktex']
        \ }
-" let g:ale_lint_on_text_changed = 'never'
-"             let g:airline#extensions#ale#enabled = 1
+let g:ale_lint_on_text_changed = 'never'
+let g:airline#extensions#ale#enabled = 1
 "
 "
 "             " Go to definition
@@ -131,10 +130,16 @@ inoremap <special> <Esc> <Esc>hl
 set guicursor+=i:blinkwait0
 
 
-
+let g:tex_flavor = 'latex'
+let g:vimtex_complete_recursive_bib = 1
 let g:vimtex_compiler_latexmk = {
     \ 'executable' : 'latexmk.exe',
     \}
-
+autocmd BufNewFile,BufRead *.tex setlocal wrap linebreak
+autocmd BufNewFile,BufRead *.tex setlocal spell spelllang=en_us
 
 let g:vimtex_view_general_viewer = 'sumatra'
+if !exists('g:deoplete#omni#input_patterns')
+    let g:deoplete#omni#input_patterns = {}
+endif
+let g:deoplete#omni#input_patterns.tex = g:vimtex#re#deoplete
