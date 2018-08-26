@@ -4,10 +4,11 @@ Plug 'vim-airline/vim-airline'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'vim-scripts/taglist.vim'
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'zchee/deoplete-jedi'
-Plug 'w0rp/ale'
-Plug 'davidhalter/jedi-vim'
+Plug 'neoclide/coc.nvim', {'do': 'yarn install'}
+"Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+"Plug 'zchee/deoplete-jedi'
+"Plug 'w0rp/ale'
+"Plug 'davidhalter/jedi-vim'
 Plug 'vim-python/python-syntax'
 Plug 'scrooloose/nerdtree'
 Plug 'yuttie/comfortable-motion.vim'
@@ -73,30 +74,46 @@ let g:airline_powerline_fonts = 1
 "
 "
 
+vnoremap <silent> <leader>r :w ! python<CR>
 nnoremap <leader>f :FZF<CR>
 nnoremap <leader>t :Tags<CR>
+nnoremap <Tab> :bn<CR>
+nnoremap <S-Tab> :bp<CR>
 
 "
 set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
 
-call deoplete#enable()
+"call deoplete#enable()
 
-call deoplete#custom#source('jedi', 'rank', 9999)
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#enable_ignore_case = 1
-let g:deoplete#enable_smart_case = 1
+"call deoplete#custom#source('jedi', 'rank', 9999)
+"let g:deoplete#enable_at_startup = 1
+"let g:deoplete#enable_ignore_case = 1
+"let g:deoplete#enable_smart_case = 1
 let g:jedi#completions_enabled = 0
-let g:deoplete#sources#jedi#show_docstring = 1
+"let g:deoplete#sources#jedi#show_docstring = 1
+" use <tab> for trigger completion and navigate next complete item
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~ '\s'
+endfunction
 
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
 " set completeopt+=noinsert
 set scrolloff=3
 
+nmap <silent> <leader>d <Plug>(coc-definition)<CR>
+nmap <leader>o  <Plug>(coc-definition)<CR> 
+
 "
 "
-let g:ale_linters = {
-       \ 'LaTeX': ['chktex']
-       \ }
-let g:ale_lint_on_text_changed = 'never'
+"let g:ale_linters = {
+"       \ 'LaTeX': ['chktex']
+"       \ }
+"let g:ale_lint_on_text_changed = 'never'
+"let g:ale_lint_on_enter = 'never'
 let g:airline#extensions#ale#enabled = 1
 "
 "
