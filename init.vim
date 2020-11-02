@@ -1,162 +1,144 @@
-call plug#begin('~/.local/share/nvim/plugegd')
-Plug 'joshdick/onedark.vim'
-Plug 'vim-airline/vim-airline'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+" Plugins will be downloaded under the specified directory.
+call plug#begin('~/.vim/plugged')
+
+"
+" IDE features
+"
+Plug 'junegunn/fzf', { 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-Plug 'vim-scripts/taglist.vim'
-Plug 'neoclide/coc.nvim', {'do': 'yarn install'}
-"Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-"Plug 'zchee/deoplete-jedi'
-"Plug 'w0rp/ale'
-"Plug 'davidhalter/jedi-vim'
-Plug 'vim-python/python-syntax'
-Plug 'scrooloose/nerdtree'
-Plug 'yuttie/comfortable-motion.vim'
-Plug 'ludovicchabant/vim-gutentags'
+Plug 'ryanoasis/vim-devicons'
 Plug 'tpope/vim-fugitive'
-Plug 'metakirby5/codi.vim'
-Plug 'cjrh/vim-conda'
-Plug 'bfredl/nvim-ipy'
-Plug 'lervag/vimtex'
-Plug 'morhetz/gruvbox'
+Plug 'tpope/vim-rhubarb' " for Gbrowse
+Plug 'preservim/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'rbgrouleff/bclose.vim' " ranger dependency
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+
+
+
+"
+" LSP
+"
+" Plug 'dense-analysis/ale'
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
+"
+" Data Science shit
+"
+Plug 'jpalardy/vim-slime'
+
+"
+" UI/UX
+"
+Plug 'vim-airline/vim-airline'
+Plug 'thaerkh/vim-indentguides'
+Plug 'yuttie/comfortable-motion.vim'
+Plug 'hzchirs/vim-material'
+
+"
+" Syntax highlighting
+"
+Plug 'GEverding/vim-hocon'
+Plug 'sheerun/vim-polyglot'
+
+
 call plug#end()
 
-set clipboard=unnamed
 
+
+"
+" General settings
+"
+set hidden " TextEdit might fail if hidden is not set.
+let mapleader = ','
+set clipboard+=unnamedplus
+set cursorline
+set relativenumber number
+nnoremap <TAB> :bn<CR>
+nnoremap <S-TAB> :bp<CR>
+nnoremap <leader>q :bp\|bd #<CR>
+set scrolloff=4
+set mouse=a
+set nowrap
+set hls is
+autocmd FileType css setlocal shiftwidth=4 tabstop=4
+autocmd FileType html setlocal shiftwidth=4 tabstop=4
 set splitbelow
 set splitright
+let g:vim_json_conceal=0
+"set showtabline=2
+
+let g:LanguageClient_serverCommands = {
+	\ 'python': ['pyls'],
+	\ 'typescript': ['./node_modules/typescript/bin/tsserver'],
+	\ }
+let g:LanguageClient_useVirtualText = 'No'
+
+nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+noremap <leader>rn :call LanguageClient#textDocument_rename()<CR>
+nnoremap <leader>B :call LanguageClient#textDocument_documentSymbol()<CR>
+nnoremap <leader>T :call LanguageClient#workspace_symbol()<CR>
+nnoremap <silent>gr :call LanguageClient#textDocument_references()<CR>
+nnoremap <leader>n :NERDTreeFind<CR>
+nnoremap <C-n> :NERDTreeToggle<CR>
 
 
 "
-"
-" " general settings
-" "
-set number
-set showmatch
-set expandtab
-set tabstop=2
-set shiftwidth=2
-set colorcolumn=80
-set nowrap
-"
-" " color scheme settings
-syntax on
-set background=dark
-let g:gruvbox_italic=1
-colorscheme gruvbox
-" colorscheme solarized
+" open gstatus in new tab
 
-if &term =~ '256color'
-    " disable Background Color Erase (BCE) so that color schemes
-    " render properly when inside 256-color tmux and GNU screen.
-    " see also http://snk.tuxfamily.org/log/vim-256color-bce.html
-   set t_ut=
-endif
+nnoremap <leader>s :tabe\|Gstatus<CR>
+
+let g:deoplete#enable_at_startup = 1
+
+
+let g:NERDTreeHijackNetrw = 1 " add this line if you use NERDTree
+let g:NERDTreeShowHidden = 1
+let g:NERDTreeMouseMode = 3 " single click to open any node
+let g:NERDTreeMinimalUI = 1
 
 "
-let mapleader=","
-let g:codi#rightalign = 0
+" FZF
 "
-let g:airline#extensions#vimtex#enabled = 1
-"
-" " airline (status bar down below and at tabs)
-let g:airline#extensions#tabline#enabled = 1
-let g:airline_powerline_fonts = 1
-"
-" " fuzzy open shortcut
-" "
-" "nnoremap <C-p> :FuzzyOpen<CR>
-" "nnoremap <leader>p :FuzzyGrep<CR>
-" nnoremap <C-p> :CtrlP<CR>
-" nnoremap <leader>p :CtrlPTag<CR>
-"
-" nmap <silent> <leader>s <Plug>(CommandTTag)
-"
-"
-
-vnoremap <silent> <leader>r :w ! python<CR>
-nnoremap <leader>f :FZF<CR>
+nnoremap <leader>f :GitFiles<CR>
+nnoremap <leader>F :FZF<CR>
+nnoremap <leader>g :Ag<CR>
+nnoremap <leader>b :BTags<CR>
 nnoremap <leader>t :Tags<CR>
-nnoremap <Tab> :bn<CR>
-nnoremap <S-Tab> :bp<CR>
 
-"
-set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
+set signcolumn=yes " Always show the signcolumn, otherwise it would shift the text each time diagnostics appear/become resolved.
 
-"call deoplete#enable()
-
-"call deoplete#custom#source('jedi', 'rank', 9999)
-"let g:deoplete#enable_at_startup = 1
-"let g:deoplete#enable_ignore_case = 1
-"let g:deoplete#enable_smart_case = 1
-let g:jedi#completions_enabled = 0
-"let g:deoplete#sources#jedi#show_docstring = 1
-" use <tab> for trigger completion and navigate next complete item
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~ '\s'
+function OpenTermWithSlimeAttached()
+	:vs
+	:term
+	let job_id = b:terminal_job_id
+	:wincmd h
+	let b:slime_config ={"jobid": job_id}
+	:wincmd l
 endfunction
-
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-" set completeopt+=noinsert
-set scrolloff=3
-
-nmap <silent> <leader>d <Plug>(coc-definition)<CR>
-nmap <leader>o  <Plug>(coc-definition)<CR> 
-
-"
-"
-"let g:ale_linters = {
-"       \ 'LaTeX': ['chktex']
-"       \ }
-"let g:ale_lint_on_text_changed = 'never'
-"let g:ale_lint_on_enter = 'never'
-let g:airline#extensions#ale#enabled = 1
-"
-"
-"             " Go to definition
-let g:jedi#goto_command = ',d'
-" Find ocurrences
-let g:jedi#usages_command = ',o'
-" " Find assignments
-let g:jedi#goto_assignments_command = ',a'
-" " Go to definition in new tab
-nmap ,D :tab split<CR>:call jedi#goto()<CR>
-"
-"
-" " in order to be able to run nvim in virtualenv
-" let g:python3_host_prog='/home/jarino/anaconda3/bin/python'
-"
-nmap <C-n> :NERDTreeToggle<CR>
-"
-let g:python_highlight_all = 1
-
-" set the cursor to a vertical line in insert mode and a solid block
-" in command mode
-let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
-let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
-" upon hitting escape to change modes,
-" send successive move-left and move-right
-" commands to immediately redraw the cursor
-inoremap <special> <Esc> <Esc>hl
-"
-" " don't blink the cursor
-set guicursor+=i:blinkwait0
+nnoremap <leader>c :vs\|:term<CR>
+nnoremap <leader>C :call OpenTermWithSlimeAttached()<CR>
+let g:slime_cell_delimiter = "#%%"
+nmap <c-c><c-e> <Plug>SlimeSendCell
 
 
-let g:tex_flavor = 'latex'
-let g:vimtex_complete_recursive_bib = 1
-let g:vimtex_compiler_latexmk = {
-    \ 'executable' : 'latexmk.exe',
-    \}
-autocmd BufNewFile,BufRead *.tex setlocal wrap linebreak
-autocmd BufNewFile,BufRead *.tex setlocal spell spelllang=en_us
+" Airline
+"
+"
+let g:airline#extensions#tabline#enabled = 1
 
-let g:vimtex_view_general_viewer = 'sumatra'
-if !exists('g:deoplete#omni#input_patterns')
-    let g:deoplete#omni#input_patterns = {}
+
+if (has('nvim'))
+  let $NVIM_TUI_ENABLE_TRUE_COLOR = 1
 endif
-let g:deoplete#omni#input_patterns.tex = g:vimtex#re#deoplete
+set termguicolors
+set background=dark
+colorscheme vim-material
+let g:airline_theme='material'
+"
+" Slime
+"
+let g:slime_target = "neovim"
+let g:slime_python_ipython = 1
