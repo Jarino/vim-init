@@ -36,6 +36,7 @@ Plug 'vim-airline/vim-airline'
 Plug 'thaerkh/vim-indentguides'
 Plug 'yuttie/comfortable-motion.vim'
 Plug 'hzchirs/vim-material'
+Plug 'mhartington/oceanic-next'
 
 "
 " Syntax highlighting
@@ -51,6 +52,8 @@ call plug#end()
 "
 " General settings
 "
+set ttyfast
+set showcmd
 set hidden " TextEdit might fail if hidden is not set.
 let mapleader = ','
 set clipboard+=unnamedplus
@@ -105,8 +108,8 @@ let g:NERDTreeMinimalUI = 1
 nnoremap <leader>f :GitFiles<CR>
 nnoremap <leader>F :FZF<CR>
 nnoremap <leader>g :Ag<CR>
-nnoremap <leader>b :BTags<CR>
-nnoremap <leader>t :Tags<CR>
+nnoremap <leader>t :BTags<CR>
+nnoremap <leader>b :Buffers<CR>
 
 set signcolumn=yes " Always show the signcolumn, otherwise it would shift the text each time diagnostics appear/become resolved.
 
@@ -129,14 +132,17 @@ nmap <c-c><c-e> <Plug>SlimeSendCell
 "
 let g:airline#extensions#tabline#enabled = 1
 
-
-if (has('nvim'))
-  let $NVIM_TUI_ENABLE_TRUE_COLOR = 1
+" Theme
+" Or if you have Neovim >= 0.1.5
+if (has("termguicolors"))
+ set termguicolors
 endif
-set termguicolors
 set background=dark
-colorscheme vim-material
-let g:airline_theme='material'
+let g:oceanic_next_terminal_bold = 1
+let g:oceanic_next_terminal_italic = 1
+colorscheme OceanicNext
+let g:airline_theme='oceanicnext'
+
 "
 " Slime
 "
