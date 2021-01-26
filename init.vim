@@ -9,21 +9,23 @@ Plug 'junegunn/fzf.vim'
 Plug 'ryanoasis/vim-devicons'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb' " for Gbrowse
-Plug 'preservim/nerdtree'
-Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'rbgrouleff/bclose.vim' " ranger dependency
+
+Plug 'lambdalisue/fern.vim'
+Plug 'lambdalisue/fern-renderer-nerdfont.vim'
+Plug 'LumaKernel/fern-mapping-fzf.vim'
+Plug 'lambdalisue/fern-hijack.vim'
+" Plug 'lambdalisue/fern-git-status.vim'
+Plug 'antoinemadec/FixCursorHold.nvim' " fixes some perf issues in fern.vim
+Plug 'lambdalisue/nerdfont.vim'
+"
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'davidhalter/jedi-vim'
+Plug 'deoplete-plugins/deoplete-jedi'
+Plug 'janko-m/vim-test'
+Plug 'groenewege/vim-less'
+Plug 'neomake/neomake'
+Plug 'psf/black', { 'branch': 'stable' }
 
-
-
-"
-" LSP
-"
-" Plug 'dense-analysis/ale'
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
 "
 " Data Science shit
 "
@@ -47,7 +49,14 @@ Plug 'sheerun/vim-polyglot'
 
 call plug#end()
 
+augroup CursorLineOnlyInActiveWindow
+  autocmd!
+  autocmd VimEnter,WinEnter,BufWinEnter * setlocal cursorline
+  autocmd WinLeave * setlocal nocursorline
+augroup END  
 
+" fern related perf fix
+let g:cursorhold_updatetime = 100
 
 "
 " General settings
@@ -67,27 +76,40 @@ set mouse=a
 set nowrap
 set hls is
 autocmd FileType css setlocal shiftwidth=4 tabstop=4
-autocmd FileType html setlocal shiftwidth=4 tabstop=4
+autocmd FileType html setlocal shiftwidth=2 tabstop=2 expandtab
 set splitbelow
 set splitright
+set switchbuf=usetab
 let g:vim_json_conceal=0
+let g:vim_markdown_conceal=0
 "set showtabline=2
+"
 
-let g:LanguageClient_serverCommands = {
-	\ 'python': ['pyls'],
-	\ 'typescript': ['./node_modules/typescript/bin/tsserver'],
-	\ }
-let g:LanguageClient_useVirtualText = 'No'
+" easier buffer control
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
 
-nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
-nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-noremap <leader>rn :call LanguageClient#textDocument_rename()<CR>
-nnoremap <leader>B :call LanguageClient#textDocument_documentSymbol()<CR>
-nnoremap <leader>T :call LanguageClient#workspace_symbol()<CR>
-nnoremap <silent>gr :call LanguageClient#textDocument_references()<CR>
-nnoremap <leader>n :NERDTreeFind<CR>
-nnoremap <C-n> :NERDTreeToggle<CR>
+noremap <silent> <C-Left> :vertical resize +3<CR>
+noremap <silent> <C-Right> :vertical resize -3<CR>
+noremap <silent> <C-Up> :resize -3<CR>
+noremap <silent> <C-Down> :resize +3<CR>
 
+
+" JEDI conf
+let g:jedi#completions_enabled = 0
+
+
+" file browser
+nnoremap <leader>n :Fern . -reveal=% -drawer<CR>
+nnoremap <C-n> :Fern . -drawer -toggle<CR>
+let g:fern#renderer = "nerdfont"
+
+
+call neomake#configure#automake('rw')
+let g:neomake_python_enabled_makers = ['mypy', 'pylint']
+"autocmd BufWritePre *.py execute ':Black'
 
 "
 " open gstatus in new tab
@@ -97,19 +119,14 @@ nnoremap <leader>s :tabe\|Gstatus<CR>
 let g:deoplete#enable_at_startup = 1
 
 
-let g:NERDTreeHijackNetrw = 1 " add this line if you use NERDTree
-let g:NERDTreeShowHidden = 1
-let g:NERDTreeMouseMode = 3 " single click to open any node
-let g:NERDTreeMinimalUI = 1
-
 "
 " FZF
 "
-nnoremap <leader>f :GitFiles<CR>
-nnoremap <leader>F :FZF<CR>
-nnoremap <leader>g :Ag<CR>
+nnoremap <leader>f :Files<CR>
+nnoremap <leader>g :GitFiles<CR>
 nnoremap <leader>t :BTags<CR>
 nnoremap <leader>b :Buffers<CR>
+nnoremap <leader>r :Rg<CR>
 
 set signcolumn=yes " Always show the signcolumn, otherwise it would shift the text each time diagnostics appear/become resolved.
 
