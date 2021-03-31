@@ -1,30 +1,38 @@
 " Plugins will be downloaded under the specified directory.
 call plug#begin('~/.vim/plugged')
-
 "
-" IDE features
+" fuzzy everything
 "
-Plug 'junegunn/fzf', { 'do': './install --all' }
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-Plug 'ryanoasis/vim-devicons'
+
+" 
+" git support
+"
+Plug 'kdheepak/lazygit.nvim', { 'branch': 'nvim-v0.4.3' }
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb' " for Gbrowse
 
+"
+" file and project management
+"
+Plug 'mhinz/vim-startify'
 Plug 'lambdalisue/fern.vim'
 Plug 'lambdalisue/fern-renderer-nerdfont.vim'
 Plug 'LumaKernel/fern-mapping-fzf.vim'
 Plug 'lambdalisue/fern-hijack.vim'
-" Plug 'lambdalisue/fern-git-status.vim'
 Plug 'antoinemadec/FixCursorHold.nvim' " fixes some perf issues in fern.vim
-Plug 'lambdalisue/nerdfont.vim'
-"
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'davidhalter/jedi-vim'
-Plug 'deoplete-plugins/deoplete-jedi'
+Plug 'airblade/vim-rooter'
+
+
+" autocomplete
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/nvim-compe'
+
+" unit test runner
 Plug 'janko-m/vim-test'
-Plug 'groenewege/vim-less'
+" for mypy
 Plug 'neomake/neomake'
-Plug 'psf/black', { 'branch': 'stable' }
 
 "
 " Data Science shit
@@ -32,31 +40,20 @@ Plug 'psf/black', { 'branch': 'stable' }
 Plug 'jpalardy/vim-slime'
 
 "
-" UI/UX
+" UI tweaks
 "
-Plug 'vim-airline/vim-airline'
-Plug 'thaerkh/vim-indentguides'
-Plug 'yuttie/comfortable-motion.vim'
-Plug 'hzchirs/vim-material'
+" bindings help
+Plug 'liuchengxu/vim-which-key'
+" Plug 'vim-airline/vim-airline'
+Plug 'lambdalisue/nerdfont.vim'
 Plug 'mhartington/oceanic-next'
-
-"
+Plug 'sainnhe/sonokai'
 " Syntax highlighting
-"
 Plug 'GEverding/vim-hocon'
 Plug 'sheerun/vim-polyglot'
-
+Plug 'groenewege/vim-less'
 
 call plug#end()
-
-augroup CursorLineOnlyInActiveWindow
-  autocmd!
-  autocmd VimEnter,WinEnter,BufWinEnter * setlocal cursorline
-  autocmd WinLeave * setlocal nocursorline
-augroup END  
-
-" fern related perf fix
-let g:cursorhold_updatetime = 100
 
 "
 " General settings
@@ -64,7 +61,7 @@ let g:cursorhold_updatetime = 100
 set ttyfast
 set showcmd
 set hidden " TextEdit might fail if hidden is not set.
-let mapleader = ','
+let mapleader = ' '
 set clipboard+=unnamedplus
 set cursorline
 set relativenumber number
@@ -80,56 +77,87 @@ autocmd FileType html setlocal shiftwidth=2 tabstop=2 expandtab
 set splitbelow
 set splitright
 set switchbuf=usetab
-let g:vim_json_conceal=0
-let g:vim_markdown_conceal=0
-"set showtabline=2
+set signcolumn=yes " Always show the signcolumn, otherwise it would shift the text each time diagnostics appear/become resolved.
+if (has("termguicolors"))
+ set termguicolors
+endif
+set completeopt=noinsert,menuone,noselect
+
+augroup CursorLineOnlyInActiveWindow
+  autocmd!
+  autocmd VimEnter,WinEnter,BufWinEnter * setlocal cursorline
+  autocmd WinLeave * setlocal nocursorline
+augroup END  
+
+" fern related perf fix
+let g:cursorhold_updatetime = 100
+
 "
+" lazygit
+nnoremap <silent> <leader>gg :LazyGit<CR>
+nnoremap <silent> <leader>ga :Git add %<CR>
+nnoremap <silent> <leader>gd :Gdiffsplit<CR>
+nnoremap <silent> <leader>gb :Gblame<CR>
 
 " easier buffer control
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
-
 noremap <silent> <C-Left> :vertical resize +3<CR>
 noremap <silent> <C-Right> :vertical resize -3<CR>
 noremap <silent> <C-Up> :resize -3<CR>
 noremap <silent> <C-Down> :resize +3<CR>
 
-
-" JEDI conf
-let g:jedi#completions_enabled = 0
+" locallist navigation
+nnoremap <silent> <leader>lo :lopen<CR>
+nnoremap <silent> <leader>ln :lnext<CR>
+nnoremap <silent> <leader>lp :lprev<CR>
+nnoremap <silent> <leader>lc :lclose<CR>
+" quickfix list navigation
+nnoremap <silent> <leader>cc :cclose<CR>
+nnoremap <silent> <leader>co :copen<CR>
+nnoremap <silent> <leader>cn :cnext<CR>
+nnoremap <silent> <leader>cp :cnext<CR>
+nnoremap <silent> <M-n> :cnext<CR>
+nnoremap <silent> <M-p> :cprev<CR>
+" Better tabbing
+vnoremap < <gv
+vnoremap > >gv
 
 
 " file browser
-nnoremap <leader>n :Fern . -reveal=% -drawer<CR>
 nnoremap <C-n> :Fern . -drawer -toggle<CR>
-let g:fern#renderer = "nerdfont"
+nnoremap <C-p> :Fern %:h<CR>
 
 
 call neomake#configure#automake('rw')
-let g:neomake_python_enabled_makers = ['mypy', 'pylint']
-"autocmd BufWritePre *.py execute ':Black'
-
-"
-" open gstatus in new tab
-
-nnoremap <leader>s :tabe\|Gstatus<CR>
-
-let g:deoplete#enable_at_startup = 1
+let g:neomake_python_enabled_makers = ['mypy']
+nnoremap <silent> <leader>xb :!black %<CR>
 
 
 "
 " FZF
 "
-nnoremap <leader>f :Files<CR>
-nnoremap <leader>g :GitFiles<CR>
-nnoremap <leader>t :BTags<CR>
-nnoremap <leader>b :Buffers<CR>
+nnoremap <leader>ff :Files<CR>
+nnoremap <leader>fg :GitFiles<CR>
+nnoremap <leader>ft :BTags<CR>
+nnoremap <leader>fb :Buffers<CR>
 nnoremap <leader>r :Rg<CR>
+let $FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --margin=1,4"
 
-set signcolumn=yes " Always show the signcolumn, otherwise it would shift the text each time diagnostics appear/become resolved.
+" Theme
+" Or if you have Neovim >= 0.1.5
+let g:sonokai_style = 'atlantis'
+let g:sonokai_enable_italic = 1
+colorscheme sonokai
+let g:airline_theme = 'sonokai'
 
+"
+" Slime
+"
+let g:slime_target = "neovim"
+let g:slime_python_ipython = 1
 function OpenTermWithSlimeAttached()
 	:vs
 	:term
@@ -138,30 +166,29 @@ function OpenTermWithSlimeAttached()
 	let b:slime_config ={"jobid": job_id}
 	:wincmd l
 endfunction
-nnoremap <leader>c :vs\|:term<CR>
-nnoremap <leader>C :call OpenTermWithSlimeAttached()<CR>
+nnoremap <leader>xc :vs\|:term<CR>
+"nnoremap <leader>C :call OpenTermWithSlimeAttached()<CR>
 let g:slime_cell_delimiter = "#%%"
 nmap <c-c><c-e> <Plug>SlimeSendCell
 
 
-" Airline
 "
+" startify
 "
-let g:airline#extensions#tabline#enabled = 1
+let g:startify_change_to_vcs_root = 1
+let g:startify_session_delete_buffers = 1
+let g:startify_change_to_dir = 1
 
-" Theme
-" Or if you have Neovim >= 0.1.5
-if (has("termguicolors"))
- set termguicolors
-endif
-set background=dark
-let g:oceanic_next_terminal_bold = 1
-let g:oceanic_next_terminal_italic = 1
-colorscheme OceanicNext
-let g:airline_theme='oceanicnext'
+" UX help with bindings
+nnoremap <silent> <leader> :silent WhichKey '<Space>'<CR>
 
 "
-" Slime
+" LSP
 "
-let g:slime_target = "neovim"
-let g:slime_python_ipython = 1
+luafile ~/.config/nvim/lsp.lua
+nnoremap <silent> gd <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> gr <cmd>lua vim.lsp.buf.references()<CR>
+nnoremap <silent> gi <cmd>lua vim.lsp.buf.implementation()<CR>
+nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
+nnoremap <silent> <C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
+set conceallevel=0
