@@ -17,12 +17,8 @@ Plug 'tpope/vim-rhubarb' " for Gbrowse
 " file and project management
 "
 Plug 'mhinz/vim-startify'
-Plug 'lambdalisue/fern.vim'
-Plug 'lambdalisue/fern-renderer-nerdfont.vim'
-Plug 'LumaKernel/fern-mapping-fzf.vim'
-Plug 'lambdalisue/fern-hijack.vim'
-Plug 'antoinemadec/FixCursorHold.nvim' " fixes some perf issues in fern.vim
 Plug 'airblade/vim-rooter'
+Plug 'cjrh/vim-conda'
 
 
 " autocomplete
@@ -31,8 +27,6 @@ Plug 'hrsh7th/nvim-compe'
 
 " unit test runner
 Plug 'janko-m/vim-test'
-" for mypy
-Plug 'neomake/neomake'
 
 "
 " Data Science shit
@@ -44,7 +38,6 @@ Plug 'jpalardy/vim-slime'
 "
 " bindings help
 Plug 'liuchengxu/vim-which-key'
-" Plug 'vim-airline/vim-airline'
 Plug 'lambdalisue/nerdfont.vim'
 Plug 'mhartington/oceanic-next'
 Plug 'sainnhe/sonokai'
@@ -82,15 +75,14 @@ if (has("termguicolors"))
  set termguicolors
 endif
 set completeopt=noinsert,menuone,noselect
+set ignorecase
+set smartcase
 
 augroup CursorLineOnlyInActiveWindow
   autocmd!
   autocmd VimEnter,WinEnter,BufWinEnter * setlocal cursorline
   autocmd WinLeave * setlocal nocursorline
 augroup END  
-
-" fern related perf fix
-let g:cursorhold_updatetime = 100
 
 "
 " lazygit
@@ -126,13 +118,6 @@ vnoremap < <gv
 vnoremap > >gv
 
 
-" file browser
-nnoremap <C-n> :Fern . -drawer -toggle<CR>
-nnoremap <C-p> :Fern %:h<CR>
-
-
-call neomake#configure#automake('rw')
-let g:neomake_python_enabled_makers = ['mypy']
 nnoremap <silent> <leader>xb :!black %<CR>
 
 
@@ -143,11 +128,10 @@ nnoremap <leader>ff :Files<CR>
 nnoremap <leader>fg :GitFiles<CR>
 nnoremap <leader>ft :BTags<CR>
 nnoremap <leader>fb :Buffers<CR>
-nnoremap <leader>r :Rg<CR>
+nnoremap <leader>fr :Rg<CR>
 let $FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --margin=1,4"
 
 " Theme
-" Or if you have Neovim >= 0.1.5
 let g:sonokai_style = 'atlantis'
 let g:sonokai_enable_italic = 1
 colorscheme sonokai
