@@ -12,13 +12,10 @@ Plug 'junegunn/fzf.vim'
 Plug 'kdheepak/lazygit.nvim', { 'branch': 'nvim-v0.4.3' }
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb' " for Gbrowse
-
 "
 " file and project management
 "
 Plug 'mhinz/vim-startify'
-Plug 'airblade/vim-rooter'
-Plug 'cjrh/vim-conda'
 
 
 " autocomplete
@@ -77,6 +74,7 @@ endif
 set completeopt=noinsert,menuone,noselect
 set ignorecase
 set smartcase
+set nowrapscan " when searching, stop at the end of document
 
 augroup CursorLineOnlyInActiveWindow
   autocmd!
@@ -151,7 +149,7 @@ function OpenTermWithSlimeAttached()
 	:wincmd l
 endfunction
 nnoremap <leader>xc :vs\|:term<CR>
-"nnoremap <leader>C :call OpenTermWithSlimeAttached()<CR>
+nnoremap <leader>xs :call OpenTermWithSlimeAttached()<CR>
 let g:slime_cell_delimiter = "#%%"
 nmap <c-c><c-e> <Plug>SlimeSendCell
 
@@ -159,9 +157,8 @@ nmap <c-c><c-e> <Plug>SlimeSendCell
 "
 " startify
 "
-let g:startify_change_to_vcs_root = 1
 let g:startify_session_delete_buffers = 1
-let g:startify_change_to_dir = 1
+let g:startify_change_to_dir = 0
 
 " UX help with bindings
 nnoremap <silent> <leader> :silent WhichKey '<Space>'<CR>
@@ -176,3 +173,4 @@ nnoremap <silent> gi <cmd>lua vim.lsp.buf.implementation()<CR>
 nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <silent> <C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
 set conceallevel=0
+autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
