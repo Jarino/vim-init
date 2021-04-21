@@ -43,6 +43,11 @@ Plug 'GEverding/vim-hocon'
 Plug 'sheerun/vim-polyglot'
 Plug 'groenewege/vim-less'
 
+Plug 'christoomey/vim-tmux-navigator'
+
+" note taking
+Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown'
 call plug#end()
 
 "
@@ -75,6 +80,7 @@ set completeopt=noinsert,menuone,noselect
 set ignorecase
 set smartcase
 set nowrapscan " when searching, stop at the end of document
+:map gF :e <cfile><cr>
 
 augroup CursorLineOnlyInActiveWindow
   autocmd!
@@ -82,12 +88,18 @@ augroup CursorLineOnlyInActiveWindow
   autocmd WinLeave * setlocal nocursorline
 augroup END  
 
+
 "
 " lazygit
 nnoremap <silent> <leader>gg :LazyGit<CR>
 nnoremap <silent> <leader>ga :Git add %<CR>
 nnoremap <silent> <leader>gd :Gdiffsplit<CR>
 nnoremap <silent> <leader>gb :Gblame<CR>
+
+"
+" fugitive
+"
+autocmd BufReadPost fugitive://* set bufhidden=delete " auto delete fugitive buffers
 
 " easier buffer control
 nnoremap <C-h> <C-w>h
@@ -117,6 +129,7 @@ vnoremap > >gv
 
 
 nnoremap <silent> <leader>xb :!black %<CR>
+nnoremap <silent> <leader>xB :!black --check .<CR>
 
 
 "
@@ -128,6 +141,11 @@ nnoremap <leader>ft :BTags<CR>
 nnoremap <leader>fb :Buffers<CR>
 nnoremap <leader>fr :Rg<CR>
 let $FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --margin=1,4"
+
+"
+" Python unittest
+"
+nnoremap <leader>tn :TestNearest<CR>
 
 " Theme
 let g:sonokai_style = 'atlantis'
@@ -148,10 +166,11 @@ function OpenTermWithSlimeAttached()
 	let b:slime_config ={"jobid": job_id}
 	:wincmd l
 endfunction
-nnoremap <leader>xc :vs\|:term<CR>
+nnoremap <leader>xc :vs\|:term <CR>
 nnoremap <leader>xs :call OpenTermWithSlimeAttached()<CR>
 let g:slime_cell_delimiter = "#%%"
 nmap <c-c><c-e> <Plug>SlimeSendCell
+tnoremap <M-Esc> <C-\><C-n>
 
 
 "
@@ -170,7 +189,15 @@ luafile ~/.config/nvim/lsp.lua
 nnoremap <silent> gd <cmd>lua vim.lsp.buf.definition()<CR>
 nnoremap <silent> gr <cmd>lua vim.lsp.buf.references()<CR>
 nnoremap <silent> gi <cmd>lua vim.lsp.buf.implementation()<CR>
+nnoremap <silent> gw <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
+nnoremap <silent> gb <cmd>lua vim.lsp.buf.buffer_symbol()<CR>
 nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <silent> <C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
 set conceallevel=0
 autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
+
+let g:netrw_list_style = 3
+
+
+let g:vim_markdown_folding_disabled = 1
+

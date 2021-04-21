@@ -1,4 +1,7 @@
-require'lspconfig'.pyright.setup {}
+local lspconfig = require'lspconfig'
+lspconfig.pyright.setup {
+  root_dir = lspconfig.util.root_pattern('pyrightconfig.json');
+}
 
 vim.o.completeopt = "menuone,noselect"
 
