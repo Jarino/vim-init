@@ -30,6 +30,8 @@ Plug 'janko-m/vim-test'
 "
 Plug 'jpalardy/vim-slime'
 
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+
 "
 " UI tweaks
 "
@@ -80,7 +82,6 @@ set completeopt=noinsert,menuone,noselect
 set ignorecase
 set smartcase
 set nowrapscan " when searching, stop at the end of document
-:map gF :e <cfile><cr>
 
 augroup CursorLineOnlyInActiveWindow
   autocmd!
@@ -201,3 +202,5 @@ let g:netrw_list_style = 3
 
 let g:vim_markdown_folding_disabled = 1
 
+
+autocmd BufNewFile,BufRead *.md lcd %:p:h
