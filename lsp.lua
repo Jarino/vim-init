@@ -1,7 +1,14 @@
 local lspconfig = require'lspconfig'
+
 lspconfig.pyright.setup {
   root_dir = lspconfig.util.root_pattern('pyrightconfig.json');
+  on_attach = function(client, bufnr)
+    require "lsp_signature".on_attach({
+	    hint_enable = false;
+    })
+  end
 }
+lspconfig.metals.setup{}
 
 vim.o.completeopt = "menuone,noselect"
 
@@ -60,4 +67,30 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
 )
 
 
-vim.api.nvim_command [[autocmd! User LspDiagnosticsChanged lua vim.lsp.diagnostic.set_loclist({open_loclist=false})]]
+vim.api.nvim_command [[autocmd! User LspDiagnosticsChanged lua vim.lsp.diagnostic.set_loclist({open=false})]]
+
+
+local actions = require('telescope.actions')
+require('telescope').setup{
+  defaults = {
+    mappings = {
+      i = {
+        ["<esc>"] = actions.close
+      },
+    },
+  },
+  pickers = {
+    -- Your special builtin config goes in here
+    buffers = {
+      mappings = {
+        i = {
+          ["<c-d>"] = actions.delete_buffer,
+        },
+      }
+    },
+  },
+}
+
+
+-- local saga = require 'lspsaga'
+-- saga.init_lsp_saga()

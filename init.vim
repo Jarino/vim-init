@@ -1,10 +1,14 @@
 " Plugins will be downloaded under the specified directory.
 call plug#begin('~/.vim/plugged')
+Plug 'tpope/vim-surround'
 "
 " fuzzy everything
 "
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-project.nvim'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 " 
 " git support
@@ -16,40 +20,44 @@ Plug 'tpope/vim-rhubarb' " for Gbrowse
 " file and project management
 "
 Plug 'mhinz/vim-startify'
+Plug 'airblade/vim-rooter'
+Plug 'cjrh/vim-conda'
 
+"
+" python specific
+"
+Plug 'jeetsukumaran/vim-pythonsense' " python text objects
 
-" autocomplete
+" linting
+Plug 'neomake/neomake'
+
+" LSP
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/nvim-compe'
+Plug 'ray-x/lsp_signature.nvim'
+
+"
+" nvim-dap
+"
+Plug 'mfussenegger/nvim-dap'
 
 " unit test runner
-Plug 'janko-m/vim-test'
+Plug 'vim-test/vim-test'
 
 "
 " Data Science shit
 "
 Plug 'jpalardy/vim-slime'
 
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-
 "
 " UI tweaks
 "
 " bindings help
 Plug 'liuchengxu/vim-which-key'
-Plug 'lambdalisue/nerdfont.vim'
-Plug 'mhartington/oceanic-next'
+" looks
 Plug 'sainnhe/sonokai'
 " Syntax highlighting
-Plug 'GEverding/vim-hocon'
-Plug 'sheerun/vim-polyglot'
 Plug 'groenewege/vim-less'
-
-Plug 'christoomey/vim-tmux-navigator'
-
-" note taking
-Plug 'godlygeek/tabular'
-Plug 'plasticboy/vim-markdown'
 call plug#end()
 
 "
@@ -81,7 +89,10 @@ endif
 set completeopt=noinsert,menuone,noselect
 set ignorecase
 set smartcase
-set nowrapscan " when searching, stop at the end of document
+"set nowrapscan " when searching, stop at the end of document
+set shortmess-=F
+inoremap jk <ESC>
+tnoremap <C-j><C-k> <C-\><C-n>
 
 augroup CursorLineOnlyInActiveWindow
   autocmd!
@@ -91,15 +102,12 @@ augroup END
 
 
 "
-" lazygit
+" git
+"
 nnoremap <silent> <leader>gg :LazyGit<CR>
 nnoremap <silent> <leader>ga :Git add %<CR>
 nnoremap <silent> <leader>gd :Gdiffsplit<CR>
 nnoremap <silent> <leader>gb :Gblame<CR>
-
-"
-" fugitive
-"
 autocmd BufReadPost fugitive://* set bufhidden=delete " auto delete fugitive buffers
 
 " easier buffer control
@@ -117,13 +125,15 @@ nnoremap <silent> <leader>lo :lopen<CR>
 nnoremap <silent> <leader>ln :lnext<CR>
 nnoremap <silent> <leader>lp :lprev<CR>
 nnoremap <silent> <leader>lc :lclose<CR>
+nnoremap <silent> <leader>lt :Telescope loclist theme=get_ivy<CR>
 " quickfix list navigation
 nnoremap <silent> <leader>cc :cclose<CR>
 nnoremap <silent> <leader>co :copen<CR>
 nnoremap <silent> <leader>cn :cnext<CR>
+nnoremap <silent> ]c :cnext<CR>
+nnoremap <silent> [c :cprev<CR>
 nnoremap <silent> <leader>cp :cnext<CR>
-nnoremap <silent> <M-n> :cnext<CR>
-nnoremap <silent> <M-p> :cprev<CR>
+nnoremap <silent> <leader>ct :Telescope quickfix theme=get_ivy<CR>
 " Better tabbing
 vnoremap < <gv
 vnoremap > >gv
@@ -131,28 +141,28 @@ vnoremap > >gv
 
 nnoremap <silent> <leader>xb :!black %<CR>
 nnoremap <silent> <leader>xB :!black --check .<CR>
+nnoremap <silent> <leader>xj :%!python -m json.tool<CR>
+nnoremap <silent> <leader>xt :!ctags -R *<CR>
+
+nnoremap <leader>ff :Telescope find_files theme=get_ivy<CR>
+nnoremap <leader>fb :Telescope buffers theme=get_ivy<CR>
+nnoremap <leader>fr :Telescope live_grep theme=get_ivy<CR>
+nnoremap <leader>fs :Telescope grep_string theme=get_ivy<CR>
+nnoremap <leader>fi :Telescope file_browser cwd=%:p:h theme=get_ivy<CR>
+nnoremap <leader>fd :Telescope lsp_document_symbols theme=get_ivy<CR>
+nnoremap <leader>fg :Telescope git_files theme=get_ivy<CR>
+nnoremap <leader>fq :Telescope quickfix theme=get_ivy<CR>
+nnoremap <leader>fj :Telescope jumplist theme=get_ivy<CR>
+nnoremap <leader>ft :Telescope tags theme=get_ivy<CR>
+nnoremap <leader>fh :Telescope help_tags theme=get_ivy<CR>
 
 
 "
-" FZF
+" unittest runner
 "
-nnoremap <leader>ff :Files<CR>
-nnoremap <leader>fg :GitFiles<CR>
-nnoremap <leader>ft :BTags<CR>
-nnoremap <leader>fb :Buffers<CR>
-nnoremap <leader>fr :Rg<CR>
-let $FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --margin=1,4"
-
-"
-" Python unittest
-"
-nnoremap <leader>tn :TestNearest<CR>
-
-" Theme
-let g:sonokai_style = 'atlantis'
-let g:sonokai_enable_italic = 1
-colorscheme sonokai
-let g:airline_theme = 'sonokai'
+nnoremap <leader>un :TestNearest<CR>
+nnoremap <leader>uf :TestFile<CR>
+let test#strategy = "neovim"
 
 "
 " Slime
@@ -166,13 +176,40 @@ function OpenTermWithSlimeAttached()
 	:wincmd h
 	let b:slime_config ={"jobid": job_id}
 	:wincmd l
+	call jobsend(job_id, "ipython\n")
+	:wincmd h
 endfunction
-nnoremap <leader>xc :vs\|:term <CR>
-nnoremap <leader>xs :call OpenTermWithSlimeAttached()<CR>
+function OpenTermWithSlimeAttachedHorizontal()
+	:split
+	:term
+	let job_id = b:terminal_job_id
+	:wincmd k
+	let b:slime_config ={"jobid": job_id}
+	:wincmd j
+	call jobsend(job_id, "ipython\n")
+	:wincmd k
+endfunction
 let g:slime_cell_delimiter = "#%%"
 nmap <c-c><c-e> <Plug>SlimeSendCell
-tnoremap <M-Esc> <C-\><C-n>
 
+"
+" terminal shortcuts
+"
+nnoremap <leader>tt :term<CR>
+nnoremap <leader>tv :vs\|:term<CR>
+nnoremap <leader>ts :split\|:term<CR>
+nnoremap <leader>tav :call OpenTermWithSlimeAttached()<CR>
+nnoremap <leader>tas :call OpenTermWithSlimeAttachedHorizontal()<CR>
+nnoremap <leader>it :call termopen('CONDA_BASE=$(conda info --base) && source $CONDA_BASE/etc/profile.d/conda.sh && conda activate $CONDA_PREFIX && ipython')<CR>
+
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  highlight = {
+    enable = true,
+  },
+}
+EOF
+colorscheme sonokai
 
 "
 " startify
@@ -192,15 +229,32 @@ nnoremap <silent> gr <cmd>lua vim.lsp.buf.references()<CR>
 nnoremap <silent> gi <cmd>lua vim.lsp.buf.implementation()<CR>
 nnoremap <silent> gw <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
 nnoremap <silent> gb <cmd>lua vim.lsp.buf.buffer_symbol()<CR>
-nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
-nnoremap <silent> <C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
+nnoremap <silent> <leader>h <cmd>lua vim.lsp.buf.hover()<CR>
+nnoremap <silent> <leader>k <cmd>lua vim.lsp.buf.signature_help()<CR>
+nnoremap <silent> <leader>r <cmd>lua vim.lsp.buf.rename()<CR>
 set conceallevel=0
 autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
 
 let g:netrw_list_style = 3
+"
+" neomake linting
+"
+call neomake#configure#automake('rw')
+let g:neomake_python_enabled_makers = ['mypy']
+
+"
+" change root
+"
+let g:rooter_patterns = ['pyrightconfig.json', '.git']
 
 
-let g:vim_markdown_folding_disabled = 1
+"
+" nvim-dap
+"
+luafile ~/.config/nvim/dap.lua
+nnoremap <leader>dt <cmd>lua require'dap'.toggle_breakpoint()<CR>
+nnoremap <leader>dc <cmd>lua require'dap'.continue()<CR>
+nnoremap <leader>dso <cmd>lua require'dap'.step_over()<CR>
+nnoremap <leader>dsi <cmd>lua require'dap'.step_into()<CR>
+nnoremap <leader>dss <cmd>lua require'dap.ui.variables'.scopes()<CR>
 
-
-autocmd BufNewFile,BufRead *.md lcd %:p:h
