@@ -33,8 +33,11 @@ Plug 'neomake/neomake'
 
 " LSP
 Plug 'neovim/nvim-lspconfig'
-Plug 'hrsh7th/nvim-compe'
-Plug 'ray-x/lsp_signature.nvim'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
 
 "
 " nvim-dap
@@ -58,6 +61,8 @@ Plug 'liuchengxu/vim-which-key'
 Plug 'sainnhe/sonokai'
 " Syntax highlighting
 Plug 'groenewege/vim-less'
+" sugar
+Plug 'kyazdani42/nvim-web-devicons'
 call plug#end()
 
 "
@@ -78,7 +83,7 @@ set mouse=a
 set nowrap
 set hls is
 autocmd FileType css setlocal shiftwidth=4 tabstop=4
-autocmd FileType html setlocal shiftwidth=2 tabstop=2 expandtab
+autocmd FileType html setlocal shiftwidth=0 tabstop=2 expandtab
 set splitbelow
 set splitright
 set switchbuf=usetab
@@ -86,7 +91,7 @@ set signcolumn=yes " Always show the signcolumn, otherwise it would shift the te
 if (has("termguicolors"))
  set termguicolors
 endif
-set completeopt=noinsert,menuone,noselect
+set completeopt=menu,menuone,noselect
 set ignorecase
 set smartcase
 "set nowrapscan " when searching, stop at the end of document
@@ -144,7 +149,7 @@ nnoremap <silent> <leader>xB :!black --check .<CR>
 nnoremap <silent> <leader>xj :%!python -m json.tool<CR>
 nnoremap <silent> <leader>xt :!ctags -R *<CR>
 
-nnoremap <leader>ff :Telescope find_files theme=get_ivy<CR>
+nnoremap <leader>ff :Telescope find_files theme=ivy<CR>
 nnoremap <leader>fb :Telescope buffers theme=get_ivy<CR>
 nnoremap <leader>fr :Telescope live_grep theme=get_ivy<CR>
 nnoremap <leader>fs :Telescope grep_string theme=get_ivy<CR>
@@ -233,7 +238,7 @@ nnoremap <silent> <leader>h <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <silent> <leader>k <cmd>lua vim.lsp.buf.signature_help()<CR>
 nnoremap <silent> <leader>r <cmd>lua vim.lsp.buf.rename()<CR>
 set conceallevel=0
-autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
+"autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
 
 let g:netrw_list_style = 3
 "
