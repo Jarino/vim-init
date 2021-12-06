@@ -13,7 +13,6 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 " 
 " git support
 "
-Plug 'kdheepak/lazygit.nvim'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb' " for Gbrowse
 "
@@ -111,7 +110,6 @@ augroup END
 "
 " git
 "
-nnoremap <silent> <leader>gg :LazyGit<CR>
 nnoremap <silent> <leader>ga :Git add %<CR>
 nnoremap <silent> <leader>gd :Gdiffsplit<CR>
 nnoremap <silent> <leader>gb :Gblame<CR>
