@@ -83,6 +83,9 @@ set nowrap
 set hls is
 autocmd FileType css setlocal shiftwidth=4 tabstop=4
 autocmd FileType html setlocal shiftwidth=0 tabstop=2 expandtab
+set shiftwidth=0
+set tabstop=2
+set expandtab
 set splitbelow
 set splitright
 set switchbuf=usetab
@@ -159,6 +162,11 @@ nnoremap <leader>fq :Telescope quickfix theme=get_ivy<CR>
 nnoremap <leader>fj :Telescope jumplist theme=get_ivy<CR>
 nnoremap <leader>ft :Telescope tags theme=get_ivy<CR>
 nnoremap <leader>fh :Telescope help_tags theme=get_ivy<CR>
+
+nnoremap <leader>s :Startify<CR>
+
+nnoremap <leader>nn :e /home/jarino/.config/nvim/init.vim<CR>
+nnoremap <leader>ns :so /home/jarino/.config/nvim/init.vim<CR>
 
 
 "
