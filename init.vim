@@ -66,7 +66,7 @@ call plug#end()
 "
 " General settings
 "
-set ttyfast
+set noswapfile
 set showcmd
 set hidden " TextEdit might fail if hidden is not set.
 let mapleader = ' '
@@ -76,7 +76,7 @@ set relativenumber number
 nnoremap <TAB> :bn<CR>
 nnoremap <S-TAB> :bp<CR>
 nnoremap <leader>q :bp\|bd #<CR>
-set scrolloff=4
+set scrolloff=12
 set mouse=a
 set nowrap
 set hls is
@@ -95,7 +95,7 @@ endif
 set completeopt=menu,menuone,noselect
 set ignorecase
 set smartcase
-"set nowrapscan " when searching, stop at the end of document
+set nowrapscan " when searching, stop at the end of document
 set shortmess-=F
 inoremap jk <ESC>
 tnoremap <C-j><C-k> <C-\><C-n>
