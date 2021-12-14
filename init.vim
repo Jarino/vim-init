@@ -181,21 +181,26 @@ let g:slime_target = "neovim"
 let g:slime_python_ipython = 1
 function OpenTermWithSlimeAttached()
 	:vs
+  :let env = $CONDA_PREFIX
 	:term
 	let job_id = b:terminal_job_id
 	:wincmd h
 	let b:slime_config ={"jobid": job_id}
 	:wincmd l
+	call jobsend(job_id, "conda activate " . env . "\n")
 	call jobsend(job_id, "ipython\n")
 	:wincmd h
 endfunction
+
 function OpenTermWithSlimeAttachedHorizontal()
 	:split
+  :let env = $CONDA_PREFIX
 	:term
 	let job_id = b:terminal_job_id
 	:wincmd k
 	let b:slime_config ={"jobid": job_id}
 	:wincmd j
+	call jobsend(job_id, "conda activate " . env . "\n")
 	call jobsend(job_id, "ipython\n")
 	:wincmd k
 endfunction
